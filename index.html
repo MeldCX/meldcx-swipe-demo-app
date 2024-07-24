@@ -122,6 +122,8 @@
         let currentSlide = 0;
 
         const initializeSwipeCarousel = () => {
+            console.log('initializeSwipeCarousel')
+
             const slides = document.querySelectorAll('.slide');
             const slideWidth = slides[0].clientWidth;
 
@@ -177,7 +179,9 @@
             });
         }
 
-        initializeSwipeCarousel()
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeSwipeCarousel()
+        })
     </script>
 
 </body>
