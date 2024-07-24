@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // CONFIGS
+        const SWIPE_LENGTH_BEFORE_SNAP = 200;
+        const ENABLE_SNAP_END_OR_START = true
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touchscreen Swipe Demo App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #instructions,
+        #title {
+            margin: auto;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 3em;
+        }
+
+        #title {
+            color: rgb(45, 112, 255);
+            /* width: 100%; */
+            padding: 1em;
+            display: flex;
+            justify-content: center;
+            grid-gap: 0.5em;
+            align-items: center;
+        }
+
+        #instructions {
+            color: rgb(79, 79, 79);
+            /* width: 100%; */
+            padding: 1em;
+        }
+
+        .carousel-container {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+        }
+
+        .slide-image {
+            max-width: 80%;
+            height: 1520px;
+            display: block;
+            margin: auto;
+            object-fit: cover;
+        }
+
+        #logo {
+            width: 70px;
+            height: auto;
+        }
+
+        #main {
+            height: 1920px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <h1 id="title"><img id="logo" src="icon_128.png"> Touchscreen Swipe Demo App </h1>
+        <div class="carousel-container">
+            <div class="carousel">
+                <div class="slide">
+                    <img class="slide-image" src="image1.jpg" alt="image 1">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image2.jpg" alt="image 2">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image3.jpg" alt="image 3">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image4.jpg" alt="image 4">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image5.jpg" alt="image 5">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image6.jpg" alt="image 6">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image7.jpg" alt="image 7">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image8.jpg" alt="image 8">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image9.jpg" alt="image 9">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="image10.jpg" alt="image 10">
+                </div>
+            </div>
+        </div>
+        <h1 id="instructions">SWIPE TO LEFT OR RIGHT</h1>
+    </div>
+
+    <script>
+        // VARIABLES
+        let touchStartPoint;
+        let currentSlide = 0;
+
+        const initializeSwipeCarousel = () => {
+            const slides = document.querySelectorAll('.slide');
+            const slideWidth = slides[0].clientWidth;
+
+            const handleSlideMove = (e) => {
+                const translateValue = (0 - currentSlide) * slideWidth;
+                document.querySelector('.carousel').style.transform = `translateX(${translateValue}px)`;
+            }
+
+            const showNextSlide = (e) => {
+                if (currentSlide < slides.length - 1) {
+                    currentSlide++;
+                } else if (ENABLE_SNAP_END_OR_START) {
+                    currentSlide = 0; // Show first slide
+                }
+                handleSlideMove();
+            }
+
+            const showPreviousSlide = (e) => {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                } else if (ENABLE_SNAP_END_OR_START) {
+                    currentSlide = slides.length - 1; // Show last slide
+                }
+                handleSlideMove();
+            }
+
+            const handleTouchMove = (e) => {
+                if (!touchStartPoint) return;
+
+                let currentPoint = e.touches[0].clientX;
+                let differenceBetweenTouchPoints = touchStartPoint - currentPoint;
+
+                if (Math.abs(differenceBetweenTouchPoints) > SWIPE_LENGTH_BEFORE_SNAP) {
+                    if (differenceBetweenTouchPoints > 0) {
+                        showNextSlide();
+                    } else {
+                        showPreviousSlide();
+                    }
+                    touchStartPoint = null;
+                }
+            }
+
+            const handleTouchStart = (e) => {
+                touchStartPoint = e.touches[0].clientX;
+            }
+
+            // // Initializing listeners for touch events on images
+            const images = document.querySelectorAll('img');
+
+            images.forEach(image => {
+                image.addEventListener('touchstart', handleTouchStart, false);
+                image.addEventListener('touchmove', handleTouchMove, false);
+            });
+        }
+
+        initializeSwipeCarousel()
+
+        // TODO: document .onload
+    </script>
+
+</body>
+
+</html>
