@@ -253,8 +253,8 @@
             const images = document.querySelectorAll('img');
 
             images.forEach(image => {
-                image.addEventListener('touchstart', handleTouchStart, false);
-                image.addEventListener('touchmove', handleTouchMove, false);
+                image.addEventListener('touchstart', handleTouchStart, { passive: true });
+                image.addEventListener('touchmove', handleTouchMove, { passive: true });
             });
 
             showNextSlide();
