@@ -48,7 +48,7 @@
         #instructions {
             color: rgb(79, 79, 79);
             /* width: 100%; */
-            padding: 1em;
+            padding: 0em 1em 1em 1em;
         }
 
         .carousel-container {
@@ -74,6 +74,7 @@
             display: block;
             margin: auto;
             object-fit: cover;
+            border-radius: 30px;
         }
 
         #logo {
@@ -83,6 +84,7 @@
 
         #main {
             height: 1920px;
+            display: grid;
         }
 
         .loading {
@@ -146,7 +148,7 @@
                 </div>
             </div>
         </div>
-        <h1 id="instructions">SWIPE TO LEFT OR RIGHT</h1>
+        <h1 id="instructions">Swipe left or right to browse.</h1>
     </div>
 
     <script>
@@ -159,6 +161,7 @@
             console.log('initializeSwipeCarousel')
             const slides = document.querySelectorAll('.slide');
             const slideWidth = slides[0].clientWidth;
+            console.log("initializeSwipeCarousel ~ slideWidth:", slideWidth)
 
             const handleSlideToOriginal = ({type}) => {
                 setTimeout(() => {
