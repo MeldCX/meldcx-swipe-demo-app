@@ -5,9 +5,19 @@
     <script>
         // CONFIGS
         const SWIPE_LENGTH_BEFORE_SNAP = 50;
-        const ENABLE_SNAP_END_OR_START = true
-    </script>
+        const LOADING_TIME = 3000;
 
+    </script>
+    <link rel="preload" href="images/image1.webp" as="image">
+    <link rel="preload" href="images/image2.webp" as="image">
+    <link rel="preload" href="images/image3.webp" as="image">
+    <link rel="preload" href="images/image4.webp" as="image">
+    <link rel="preload" href="images/image5.webp" as="image">
+    <link rel="preload" href="images/image6.webp" as="image">
+    <link rel="preload" href="images/image7.webp" as="image">
+    <link rel="preload" href="images/image8.webp" as="image">
+    <link rel="preload" href="images/image9.webp" as="image">
+    <link rel="preload" href="images/image10.webp" as="image">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Touchscreen Swipe Demo App</title>
     <style>
@@ -49,7 +59,8 @@
 
         .carousel {
             display: flex;
-            transition: transform 0.5s ease;
+            /* transition: transform 0s ease; */
+            transition: 0s;
         }
 
         .slide {
@@ -73,43 +84,65 @@
         #main {
             height: 1920px;
         }
+
+        .loading {
+            position: absolute;
+            top: 0;
+            z-index: 10;
+            height: 100vh;
+            width: 100vw;
+            display: grid;
+            align-items: center;
+            align-content: center;
+            background: rgb(255, 255, 255);
+            transition: 1s;
+        }
     </style>
 </head>
 
 <body>
+    <div class="loading">
+        <h1 id="title"><img id="logo" src="images/icon_128.png"> Touchscreen Swipe Demo App </h1>
+    </div>
     <div id="main">
         <h1 id="title"><img id="logo" src="images/icon_128.png"> Touchscreen Swipe Demo App </h1>
         <div class="carousel-container">
             <div class="carousel">
                 <div class="slide">
-                    <img class="slide-image" src="images/image1.jpg" alt="image 1">
+                    <img class="slide-image" src="images/image10.webp" alt="image 10">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image2.jpg" alt="image 2">
+                    <img class="slide-image" src="images/image1.webp" alt="image 1">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image3.jpg" alt="image 3">
+                    <img class="slide-image" src="images/image2.webp" alt="image 2">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image4.jpg" alt="image 4">
+                    <img class="slide-image" src="images/image3.webp" alt="image 3">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image5.jpg" alt="image 5">
+                    <img class="slide-image" src="images/image4.webp" alt="image 4">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image6.jpg" alt="image 6">
+                    <img class="slide-image" src="images/image5.webp" alt="image 5">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image7.jpg" alt="image 7">
+                    <img class="slide-image" src="images/image6.webp" alt="image 6">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image8.jpg" alt="image 8">
+                    <img class="slide-image" src="images/image7.webp" alt="image 7">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image9.jpg" alt="image 9">
+                    <img class="slide-image" src="images/image8.webp" alt="image 8">
                 </div>
                 <div class="slide">
-                    <img class="slide-image" src="images/image10.jpg" alt="image 10">
+                    <img class="slide-image" src="images/image9.webp" alt="image 9">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="images/image10.webp" alt="image 10">
+                </div>
+                <div class="slide">
+                    <img class="slide-image" src="images/image1.webp" alt="image 10">
                 </div>
             </div>
         </div>
@@ -120,34 +153,78 @@
         // VARIABLES
         let touchStartPoint;
         let currentSlide = 0;
+        let snapBackedToOriginal = false;
 
         const initializeSwipeCarousel = () => {
             console.log('initializeSwipeCarousel')
-
             const slides = document.querySelectorAll('.slide');
             const slideWidth = slides[0].clientWidth;
 
-            const handleSlideMove = (e) => {
+            const handleSlideToOriginal = ({type}) => {
+                setTimeout(() => {
+                    // Remove the transition
+                    document.querySelector('.carousel').style.transition = 'transform 0s ease';
+
+                    if (type === 'prev') {
+                        currentSlide = slides.length - 2
+                        const originalTranslateValue = (0 - currentSlide) * slideWidth;
+                        document.querySelector('.carousel').style.transform = `translateX(${originalTranslateValue}px)`;
+                    }
+
+                    if (type === 'next') {
+                        currentSlide = 1
+                        const originalTranslateValue = (0 - currentSlide) * slideWidth;
+                        document.querySelector('.carousel').style.transform = `translateX(${originalTranslateValue}px)`;
+                    }
+                    snapBackedToOriginal = true;
+
+                }, 500)
+            }
+
+            const handleSlideMove = ({ snapToOriginal, type }) => {
                 const translateValue = (0 - currentSlide) * slideWidth;
                 document.querySelector('.carousel').style.transform = `translateX(${translateValue}px)`;
+
+                if (snapToOriginal) {
+                    handleSlideToOriginal({type})
+                }
+            }
+
+            const handleTransitionAfterSlideOriginal = () => {
+                if (snapBackedToOriginal) {
+                    document.querySelector('.carousel').style.transition = 'transform 0.5s ease';
+                    snapBackedToOriginal = false;
+                }
             }
 
             const showNextSlide = (e) => {
+                handleTransitionAfterSlideOriginal()
+                let snapToOriginal = false;
+
                 if (currentSlide < slides.length - 1) {
                     currentSlide++;
-                } else if (ENABLE_SNAP_END_OR_START) {
-                    currentSlide = 0; // Show first slide
                 }
-                handleSlideMove();
+
+                if (currentSlide === slides.length - 1) {
+                    snapToOriginal = true;
+                }
+
+                handleSlideMove({ snapToOriginal, type: 'next' });
             }
 
             const showPreviousSlide = (e) => {
+                handleTransitionAfterSlideOriginal()
+                let snapToOriginal = false;
+
                 if (currentSlide > 0) {
                     currentSlide--;
-                } else if (ENABLE_SNAP_END_OR_START) {
-                    currentSlide = slides.length - 1; // Show last slide
                 }
-                handleSlideMove();
+
+                if (currentSlide === 0) {
+                    snapToOriginal = true;
+                }
+
+                handleSlideMove({ snapToOriginal, type: 'prev' });
             }
 
             const handleTouchMove = (e) => {
@@ -177,10 +254,26 @@
                 image.addEventListener('touchstart', handleTouchStart, false);
                 image.addEventListener('touchmove', handleTouchMove, false);
             });
+
+            showNextSlide();
+
+            setTimeout(() => {
+                document.querySelector('.carousel').style.transition = 'transform 0.5s ease';
+            }, 500)
+        }
+
+        const handleLoading = () => {
+            setTimeout(() => {
+                document.querySelector('.loading').style.opacity = 0;
+            }, LOADING_TIME)
+            setTimeout(() => {
+                document.querySelector('.loading').style.display = 'none';
+            }, LOADING_TIME + 1000)
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             initializeSwipeCarousel()
+            handleLoading()
         })
     </script>
 
